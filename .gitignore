@@ -1,0 +1,3 @@
+# ignore files, will not be saved
+*.class
+.vscode/

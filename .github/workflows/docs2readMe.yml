@@ -1,0 +1,57 @@
+# Note: need to give CI permissions or else it cant write to ReadME
+#  Settings -> Workflow permissions -> Read and Write
+
+# Need ID to google docs + make google docs editable
+#  when linking google docs make sure this is at end of link: export?format=docx
+
+
+name: Sync README from Google Docs
+
+permissions:
+  contents: write
+
+on:
+  push:
+    branches:
+    - main
+  # schedule:
+    # - cron: "0 0 * * *"  # every hour
+  workflow_dispatch:     # manual trigger button
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Pandoc
+        uses: r-lib/actions/setup-pandoc@v2
+
+      - name: Download Google Doc
+        run: |
+          curl -L "https://docs.google.com/document/d/LOREM/export?format=docx" -o doc.docx
+          
+      # html = formats it using html
+      # gfm = github-flavored markdown 
+      # media-assets = show images
+      - name: Convert to README.md
+        run: |
+          pandoc doc.docx -t gfm --extract-media=assets -o README.md
+
+      - name: Add badges to top
+        run: |
+          echo '[![Java CI](https://github.com/Ansuperope/Java-Project-2-Banking-System/actions/workflows/java.yml/badge.svg)](https://github.com/Ansuperope/Java-Project-2-Banking-System/actions/workflows/java.yml)' > temp.md
+          echo '[![Documentation](https://img.shields.io/badge/Documentation-Doxygen-blue?logo=doxygen)](https://ansuperope.github.io/Java-Project-2-Banking-System/)' >> temp.md
+          echo '' >> temp.md
+          cat README.md >> temp.md
+          mv temp.md README.md
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add README.md
+          git diff --quiet && git diff --staged --quiet || git commit -m "Auto-update README from Google Docs"
+          git push
