@@ -20,6 +20,7 @@ on:
 
 jobs:
   update-readme:
+
     runs-on: ubuntu-latest
 
     steps:
@@ -31,7 +32,7 @@ jobs:
 
       - name: Download Google Doc
         run: |
-          curl -L "https://docs.google.com/document/d/LOREM/export?format=docx" -o doc.docx
+          curl -L "https://docs.google.com/document/d/16Y333gxGZtfun0O5UWAQ8kUl4bCoUqownEGffcbs5-k/export?format=docx" -o doc.docx
           
       # html = formats it using html
       # gfm = github-flavored markdown 
@@ -42,8 +43,8 @@ jobs:
 
       - name: Add badges to top
         run: |
-          echo '[![Java CI](https://github.com/Ansuperope/Java-Project-2-Banking-System/actions/workflows/java.yml/badge.svg)](https://github.com/Ansuperope/Java-Project-2-Banking-System/actions/workflows/java.yml)' > temp.md
-          echo '[![Documentation](https://img.shields.io/badge/Documentation-Doxygen-blue?logo=doxygen)](https://ansuperope.github.io/Java-Project-2-Banking-System/)' >> temp.md
+          echo '[![Java CI](https://github.com/Ansuperope/Java-Address-Book/actions/workflows/java.yml/badge.svg)](https://github.com/Ansuperope/Java-Address-Book/actions/workflows/java.yml)' > temp.md
+          echo '[![Documentation](https://img.shields.io/badge/Documentation-Doxygen-blue?logo=doxygen)](https://ansuperope.github.io/Java-Address-Book/)' >> temp.md
           echo '' >> temp.md
           cat README.md >> temp.md
           mv temp.md README.md
