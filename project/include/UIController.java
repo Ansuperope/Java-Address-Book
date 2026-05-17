@@ -49,6 +49,9 @@ public class UIController {
     /*******************************************************************
      * Contact operations
      ******************************************************************/
+    /**
+     * UI for entering contacts
+     */
     private static void addContactUI(AddressBook book) {
         int id = getIntInput("ID: ");
         String type = getStringInput("Type: ");
@@ -63,15 +66,15 @@ public class UIController {
         System.out.print("Add tag(s)? (y/n): ");
         addTagChoice = sc.nextLine().charAt(0);
 
+        // Get user to enter tags as long as they input y
         while (addTagChoice == 'y' || addTagChoice == 'Y') {
-
             tags.add(getStringInput("Enter tag: "));
 
             System.out.print("Add another? (y/n): ");
             addTagChoice = sc.nextLine().charAt(0);
         } // END while while (addTagChoice == 'y' || addTagChoice == 'Y')
 
-
+        // Check if contact was added
         boolean ok = book.addContact(new Contact(id, type, name, city, email, phone, tags));
 
         // Contact added
@@ -83,13 +86,82 @@ public class UIController {
 
     } // END addContactUI
 
-    private static void editContactUI(AddressBook book) { 
+    /**
+     * UI for editing contacts
+     */
+    public static void editContactUI(AddressBook book) {
+        // Get id of contact to edit
+        int id = getIntInput("Enter ID to edit: ");
+        Contact c = book.searchById(id);
+
+        // Check if contact exists
+        if (c == null) {
+            System.out.println("Contact not found.");
+            return;
+        } // END if (c == null)
+
+        // Editing contact
+        System.out.println("\nEditing Contact:\n");
+        System.out.println(Formatter.formatDetails(c));
+
+        // Name
+        String name = getStringInput("New name (leave blank to keep): ");
+        if (!name.isEmpty()) {
+            c.setName(name);
+        } // END if
+
+        // City
+        String city = getStringInput("New city (leave blank to keep): ");
+        if (!city.isEmpty()) {
+            c.setCity(city);
+        } // END if
+
+        // Email
+        String email = getStringInput("New email (leave blank to keep): ");
+        if (!email.isEmpty()) {
+            c.setEmail(email);
+        } // END if
+
+        // Phone Number
+        String phone = getStringInput("New phone (leave blank to keep): ");
+        if (!phone.isEmpty()) {
+            c.setPhone(phone);
+        } // END if
+
+        System.out.println("Updated.");
     } // END editContactUI
 
+    /**
+     * UI for deleting contacts
+     */
     private static void deleteContactUI(AddressBook book) { 
+        int id = getIntInput("Enter ID to delete: ");
+        // Found ID
+        if (book.removeContactById(id))
+            System.out.println("Deleted.");
+        // Did not find
+        else
+        System.out.println("Contact not found.");
+
     } // END deleteContactUI
 
-    private static void viewAllUI(AddressBook book) { 
+    /**
+     * View all contacts information
+     */
+    public void viewAllUI(AddressBook book) {
+
+        ArrayList<Contact> list = book.getAllContacts();
+
+        // No contacts
+        if (list.isEmpty()) {
+            System.out.println("No contacts.");
+            return;
+        } // END if
+
+        // Print all contact info
+        for (Contact c : list) {
+            System.out.println(Formatter.formatDetails(c));
+        } // END for
     } // END viewAllUI
 
     private static void searchUI(AddressBook book) { 

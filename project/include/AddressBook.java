@@ -41,6 +41,11 @@ public class AddressBook {
     } // END AddressBook group
 
     /**
+     * Getter function. Gets all contacts
+     */
+    public ArrayList<Contact> getAllContacts() { return contacts; }
+
+    /**
      * Adds a basic contact
      *
      * @param associate person to add
