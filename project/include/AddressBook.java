@@ -44,9 +44,21 @@ public class AddressBook {
      * Adds a basic contact
      *
      * @param associate person to add
+     * @return boolean: true = added, false = not added
      */
-    public void addContact(Contact associate) {
+    public boolean addContact(Contact associate) {
+
+        // Checksj if contact already added, return false if so
+        for (Contact c : contacts) {
+            // duplicate ID
+            if (c.getId() == associate.getId()) {
+                return false; 
+            } // END if
+        } // END for (Contact c : contacts)
+
+        // Can add id
         contacts.add(associate);
+        return true;
     } // END addContact
 
     /**
@@ -107,10 +119,11 @@ public class AddressBook {
     } // END displayAllContacts
 
     /**
-     * Removes a contact based on the user-inputted id. The contact is 
-     * erased if the user-inputted id is found within the vector of 
-     * contact objects and returns true, and changes nothing if there is 
-     * no contact with the id while returning false.
+     * Removes a contact based on the user-inputted id. The contact is erased if
+     * the user-inputted id is found within the vector of contact objects and
+     * returns true, and changes nothing if there is no contact with the id
+     * while returning false.
+     *
      * @param id contact to delete
      */
     public boolean removeContactById(int id) {
@@ -126,14 +139,13 @@ public class AddressBook {
     } // END removeContactById
 
     /**
-     *  Interactive function that calls displayAllContacts() then allows
-     * for the user to input a basic id for a contact to delete, calls 
-     * removeContactById(), then reports the result to the user. The 
-     * function validates the id, letting the user know that the input 
-     * is invalid if it does not fit within the constraints of the 
-     * program. The function will let the user know if a contact was 
-     * deleted, and if not, the user will be notified that there was no 
-     * contact with the inputted id.
+     * Interactive function that calls displayAllContacts() then allows for the
+     * user to input a basic id for a contact to delete, calls
+     * removeContactById(), then reports the result to the user. The function
+     * validates the id, letting the user know that the input is invalid if it
+     * does not fit within the constraints of the program. The function will let
+     * the user know if a contact was deleted, and if not, the user will be
+     * notified that there was no contact with the inputted id.
      */
     public void deleteContactInteractive() {
 
@@ -185,15 +197,15 @@ public class AddressBook {
 
                     g.memberIds.remove(Integer.valueOf(contactId));
 
-                    System.out.println("Contact ID " + contactId +
-                        " removed from group '" + groupName + "'.");
+                    System.out.println("Contact ID " + contactId
+                            + " removed from group '" + groupName + "'.");
 
                 } // END if (g.memberIds.contains(contactId))
                 // Could not find id in group
                 else {
 
-                    System.out.println("Contact ID " + contactId +
-                        " not found in group '" + groupName + "'.");
+                    System.out.println("Contact ID " + contactId
+                            + " not found in group '" + groupName + "'.");
                 } // END else
 
                 // Exit function
@@ -209,7 +221,7 @@ public class AddressBook {
      * Delete a group as a whole
      */
     public void deleteGroup(String groupName) {
-        
+
         // Search through groups to find group name
         for (int i = 0; i < groups.size(); i++) {
             // Found group name
@@ -229,10 +241,9 @@ public class AddressBook {
     } // END deleteGroup
 
     /**
-     * Searching functions that browse for a specific feature of a 
-     * contact, given a vector of contacts. These functions will often 
-     * only find one instance of the feature, unless there is a special
-     * case.
+     * Searching functions that browse for a specific feature of a contact,
+     * given a vector of contacts. These functions will often only find one
+     * instance of the feature, unless there is a special case.
      */
     public Contact searchById(int id) {
         for (Contact c : contacts) {
@@ -287,16 +298,17 @@ public class AddressBook {
         return results;
     } // END searchByPhone
 
-    /*******************************************************************
-     * Similar to searching functions, but these functions filter. 
-     * Instead of being cases where one instance is found, there are 
-     * often multiple, as the filtering is done by very broad criteria.
-     ******************************************************************/
-
     /**
-     * Filters the contacts based on the type, such as work or family. 
-     * Since there could be multiple, all of the contacts with the 
-     * specified type are returned.
+     * *****************************************************************
+     * Similar to searching functions, but these functions filter. Instead of
+     * being cases where one instance is found, there are often multiple, as the
+     * filtering is done by very broad criteria.
+     *****************************************************************
+     */
+    /**
+     * Filters the contacts based on the type, such as work or family. Since
+     * there could be multiple, all of the contacts with the specified type are
+     * returned.
      */
     public ArrayList<Contact> filterByType(String type) {
         ArrayList<Contact> results = new ArrayList<>();
@@ -311,9 +323,9 @@ public class AddressBook {
     } // END filterByType
 
     /**
-     * Filters the contacts based on the city, such as Los Angeles or 
-     * Chicago. Since there could be multiple, all of the contacts with 
-     * the specified city are returned.
+     * Filters the contacts based on the city, such as Los Angeles or Chicago.
+     * Since there could be multiple, all of the contacts with the specified
+     * city are returned.
      */
     public ArrayList<Contact> filterByCity(String city) {
         ArrayList<Contact> results = new ArrayList<>();
@@ -323,7 +335,7 @@ public class AddressBook {
                 results.add(c);
             } // END if
         } // END for
-        
+
         return results;
     } // END filterByCity
 
@@ -357,7 +369,9 @@ public class AddressBook {
                 out.write(tags.get(i));
 
                 // Avoid trailing comma
-                if (i < tags.size() - 1) out.write(",");
+                if (i < tags.size() - 1) {
+                    out.write(",");
+                }
             } // END for (int i = 0; i < tags.size(); i++)
 
             // Add a newline and a separator to mark the end of this contact
@@ -386,7 +400,9 @@ public class AddressBook {
 
             // Read each contact's 7 lines in the same order they were written
             String idStr = in.readLine();
-            if (idStr == null) break;
+            if (idStr == null) {
+                break;
+            }
 
             String type = in.readLine();
             String name = in.readLine();
@@ -513,8 +529,8 @@ public class AddressBook {
         // Iteratre through all groups
         for (Group g : groups) {
 
-            System.out.println("Group: " + g.name +
-                        " (Total members: " + g.memberIds.size() + ")");
+            System.out.println("Group: " + g.name
+                    + " (Total members: " + g.memberIds.size() + ")");
 
             // Print all members in the group
             for (int memberId : g.memberIds) {
@@ -532,13 +548,13 @@ public class AddressBook {
 
                 // Found id, print id
                 if (foundContact != null) {
-                    System.out.println(" - " + foundContact.getName() +
-                        " (" + foundContact.getType() + ")");
+                    System.out.println(" - " + foundContact.getName()
+                            + " (" + foundContact.getType() + ")");
                 } // END if (foundContact != null)
                 // Id does not exist, print error
                 else {
-                    System.out.println(" - Contact ID " + memberId +
-                        " not found.");
+                    System.out.println(" - Contact ID " + memberId
+                            + " not found.");
                 } // END else
             } // END for (int memberId : g.memberIds)
 
