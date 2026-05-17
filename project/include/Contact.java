@@ -62,4 +62,66 @@ public class Contact {
     public void setEmail(String e) { email = e; }
     public void setPhone(String p) { phone = p; }
 
+    /**
+     * Print all tags
+     */
+    public void displayTags() {
+        System.out.println("Tags: ");
+
+        for (String tag : tags) {
+            System.out.print(tag + " ");
+        } // END for (String tag : tags)
+
+        System.out.println();
+    } // END displayTags
+
+    /**
+     * Add tags if tage does not already exist
+     * @param tag tag to add
+     */
+    public void addTag(String tag) {
+        if (!hasTag(tag)) {
+            tags.add(tag);
+        } // END (!hasTag(tag))
+    } // END addTag
+
+    /**
+     * Remove tag
+     * @param tag tag to remove
+     */
+    public void removeTag(String tag) {
+        tags.remove(tag);
+    } // END removeTag
+
+    /**
+     * Checks if tag exists
+     * @param tag tag to check
+     */
+    public boolean hasTag(String tag) {
+        return tags.contains(tag);
+    } // END hasTag
+    
+    /**
+     * Prints quick summary of key contact features
+     */
+    public void printSummary() {
+        System.out.println("[" + id + "] " + name + " (" + type + ")");
+    } // END printSummary
+
+    /**
+     * Prints important details about the contact
+     */
+    public void printDetails() {
+        System.out.println("ID: " + id);
+        System.out.println("Type: " + type);
+        System.out.println("Name: " + name);
+        System.out.println("City: " + city);
+        System.out.println("Email: " + email);
+        System.out.println("Phone: " + phone);
+
+        displayTags();
+
+        System.out.println();
+        System.out.println("------------------------");
+    } // END printDetails
 } // END class Contact
