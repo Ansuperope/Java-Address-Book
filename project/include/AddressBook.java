@@ -345,6 +345,23 @@ public class AddressBook {
     } // END filterByCity
 
     /**
+     * Filters the contacts based on the tag, such as friends or family.
+     * Since there could be multiple, all of the contacts with the specified
+     * tags are returned.
+     */
+    public ArrayList<Contact> filterByTag(String tag) {
+        ArrayList<Contact> results = new ArrayList<>();
+
+        for (Contact c : contacts) {
+            if (c.getTags().contains(tag)) {
+                results.add(c);
+            } // END if
+        } // END for
+
+        return results;
+    } // END filterByCity
+
+    /**
      * Save contacts directly to "contact.txt"
      */
     public void saveToFile() throws IOException {

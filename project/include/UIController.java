@@ -8,22 +8,25 @@ import java.util.Scanner;
 import project.include.AddressBook;
 
 public class UIController {
+
     // getting input
     private final static Scanner sc = new Scanner(System.in);
 
     /**
      * main program
      */
-    static void run(AddressBook book) { 
+    static void run(AddressBook book) {
     } // END run
 
-    /*******************************************************************
+    /**
+     * *****************************************************************
      * Main menus
-     ******************************************************************/
+     *****************************************************************
+     */
     /**
      * print options user can choose from
      */
-     private static void showMainMenu() { 
+    private static void showMainMenu() {
         System.out.println("\n===== ADDRESS BOOK MENU =====");
         System.out.println("1. Add New Contact");
         System.out.println("2. Edit Contact");
@@ -39,16 +42,19 @@ public class UIController {
     } // END showMainMenu
 
     /**
-     * 
+     *
      */
-    private static void manageGroups(AddressBook book) { 
+    private static void manageGroups(AddressBook book) {
     } // END manageGroups
-    private static void manageTags(AddressBook book) { 
+
+    private static void manageTags(AddressBook book) {
     } // END manageTags
 
-    /*******************************************************************
+    /**
+     * *****************************************************************
      * Contact operations
-     ******************************************************************/
+     *****************************************************************
+     */
     /**
      * UI for entering contacts
      */
@@ -78,11 +84,12 @@ public class UIController {
         boolean ok = book.addContact(new Contact(id, type, name, city, email, phone, tags));
 
         // Contact added
-        if (ok)
-            System.out.print("Contact added.\n");
-        // Contact not added
-        else
+        if (ok) {
+            System.out.print("Contact added.\n"); 
+        }// Contact not added
+        else {
             System.out.print("Error: ID already exists.\n");
+        }
 
     } // END addContactUI
 
@@ -134,21 +141,22 @@ public class UIController {
     /**
      * UI for deleting contacts
      */
-    private static void deleteContactUI(AddressBook book) { 
+    private static void deleteContactUI(AddressBook book) {
         int id = getIntInput("Enter ID to delete: ");
         // Found ID
-        if (book.removeContactById(id))
-            System.out.println("Deleted.");
-        // Did not find
-        else
-        System.out.println("Contact not found.");
+        if (book.removeContactById(id)) {
+            System.out.println("Deleted."); 
+        }// Did not find
+        else {
+            System.out.println("Contact not found.");
+        }
 
     } // END deleteContactUI
 
     /**
      * View all contacts information
      */
-    public void viewAllUI(AddressBook book) {
+    public static void viewAllUI(AddressBook book) {
 
         ArrayList<Contact> list = book.getAllContacts();
 
@@ -164,20 +172,109 @@ public class UIController {
         } // END for
     } // END viewAllUI
 
-    private static void searchUI(AddressBook book) { 
+    /**
+     * UI to search for a person by name, email or phone
+     */
+    public static void searchUI(AddressBook book) {
+
+        // Prompt options
+        System.out.println("\nSearch by:");
+        System.out.println("1 = Name");
+        System.out.println("2 = Email");
+        System.out.println("3 = Phone");
+
+        int choice = getIntInput("Choose: ");
+        String query = getStringInput("Enter search value: ");
+
+        ArrayList<Contact> results;
+
+        // Search by name
+        if (choice == 1) {
+            results = book.searchByName(query);
+        } // END if
+        // Search by email
+        else if (choice == 2) {
+            results = book.searchByEmail(query);
+        } // END else if
+        // Search by phone
+        else if (choice == 3) {
+            results = book.searchByPhone(query);
+        } // END else if
+        // Search option invalid, default
+        else {
+            System.out.println("Invalid.");
+            return;
+        } // END else
+
+        // Did not find anything
+        if (results.isEmpty()) {
+            System.out.println("No results.");
+            return;
+        } // END if
+
+        // Searching through all contacts
+        for (Contact c : results) {
+            System.out.println(Formatter.formatDetails(c));
+        } // END for
     } // END searchUI
 
-    private static void filterUI(AddressBook book) { 
+    /**
+     * UI to filter through contacts by type, city or tag
+     */
+    public static void filterUI(AddressBook book) {
+
+        // Prompt filter options
+        System.out.println("\nFilter by:");
+        System.out.println("1 = Type");
+        System.out.println("2 = City");
+        System.out.println("3 = Tag");
+
+        int choice = getIntInput("Choose: ");
+        String query = getStringInput("Enter filter value: ");
+
+        ArrayList<Contact> results;
+
+        // Filter by type
+        if (choice == 1) {
+            results = book.filterByType(query);
+        } // END if
+        // Filter by city
+        else if (choice == 2) {
+            results = book.filterByCity(query);
+        } // END else if
+        // Filter by tag
+        else if (choice == 3) {
+            results = book.filterByTag(query);
+        } // END else if
+        // Invalid option, default
+        else {
+            System.out.println("Invalid.");
+            return;
+        } // END else
+
+        // Found nothing
+        if (results.isEmpty()) {
+            System.out.println("No results.");
+            return;
+        } // END if
+
+        // Filtering
+        for (Contact c : results) {
+            System.out.println(Formatter.formatDetails(c));
+        } // END for
     } // END filterUI
 
-    /*******************************************************************
+    /**
+     * *****************************************************************
      * Helpers
-     ******************************************************************/
+     *****************************************************************
+     */
     /**
      * function to get user input for integers
+     *
      * @param prompt message to ouput to user
      */
-    private static int getIntInput(String prompt) { 
+    private static int getIntInput(String prompt) {
         System.out.print(prompt);
 
         while (!sc.hasNextInt()) {
@@ -192,9 +289,10 @@ public class UIController {
 
     /**
      * function to get user input for Strings
+     *
      * @param prompt message to ouput to user
      */
-    private static String getStringInput(String prompt) { 
+    private static String getStringInput(String prompt) {
         System.out.print(prompt);
         return sc.nextLine();
     } // END getStringInput
