@@ -130,23 +130,491 @@ of contact objects.**
 
 Source.cpp
 
+\#include "Contact.h"
+
 \#include "AddressBook.h"
 
-\#include "UIController.h"
+\#include \<iostream\>
 
-int main()
+\#include \<string\>
 
-{
+\#include \<limits\>
 
-AddressBook book;
+using namespace std;
 
-book.loadFromFile(); // optional auto-load
+void showMainMenu();
 
-UIController::run(book);
+void showGroupMenu();
 
-book.saveToFile(); // auto-save on exit
+void showTagMenu(AddressBook& myBook);
+
+int main() {
+
+AddressBook myBook(vector\<Contact\>{});
+
+myBook.loadFromFile();
+
+int choice = -1;
+
+while (choice != 0) {
+
+showMainMenu();
+
+cin \>\> choice;
+
+cin.ignore();
+
+switch (choice) {
+
+case 1: { // Add contact
+
+myBook.addContactInteractive();
+
+break;
+
+}
+
+case 2: { // Edit contact
+
+cout \<\< "Enter the ID of the contact to edit: ";
+
+int id;
+
+cin \>\> id;
+
+cin.ignore();
+
+Contact\* contact = myBook.searchById(id);
+
+if (contact) {
+
+cout \<\< "Editing Contact \[" \<\< contact-\>getName() \<\< "\]\n";
+
+cout \<\< "Enter new name (or press Enter to keep '" \<\<
+contact-\>getName() \<\< "'): ";
+
+string name;
+
+getline(cin, name);
+
+if (!name.empty()) contact-\>setName(name);
+
+cout \<\< "Enter new city (or press Enter to keep '" \<\<
+contact-\>getCity() \<\< "'): ";
+
+string city;
+
+getline(cin, city);
+
+if (!city.empty()) contact-\>setCity(city);
+
+cout \<\< "Enter new email (or press Enter to keep '" \<\<
+contact-\>getEmail() \<\< "'): ";
+
+string email;
+
+getline(cin, email);
+
+if (!email.empty()) contact-\>setEmail(email);
+
+cout \<\< "Enter new phone (or press Enter to keep '" \<\<
+contact-\>getPhone() \<\< "'): ";
+
+string phone;
+
+getline(cin, phone);
+
+if (!phone.empty()) contact-\>setPhone(phone);
+
+cout \<\< "Contact updated successfully!\n";
+
+}
+
+else {
+
+cout \<\< "No contact found with ID " \<\< id \<\< ".\n";
+
+}
+
+break;
+
+}
+
+case 3: { // Delete contact
+
+myBook.deleteContactInteractive();
+
+break;
+
+}
+
+case 4: { // View all
+
+cout \<\< "\n--- CONTACT LIST ---\n";
+
+myBook.displayAllContacts();
+
+break;
+
+}
+
+case 5: { // Search
+
+cout \<\< "\nSearch by:\n1. Name\n2. Email\n3. Phone\nChoose: ";
+
+int s; cin \>\> s;
+
+cin.ignore();
+
+string query;
+
+cout \<\< "Enter search term: ";
+
+getline(cin, query);
+
+vector\<const Contact\*\> results;
+
+if (s == 1) results = myBook.searchByName(query);
+
+else if (s == 2) results = myBook.searchByEmail(query);
+
+else if (s == 3) results = myBook.searchByPhone(query);
+
+if (results.empty()) cout \<\< "No results found.\n";
+
+else {
+
+cout \<\< results.size() \<\< " result(s):\n";
+
+for (const auto\* c : results) c-\>printDetails();
+
+}
+
+break;
+
+}
+
+case 6: { // Filter
+
+cout \<\< "\nFilter by:\n1. Type\n2. City\nChoose: ";
+
+int f; cin \>\> f;
+
+cin.ignore();
+
+string query;
+
+cout \<\< "Enter filter value: ";
+
+getline(cin, query);
+
+vector\<const Contact\*\> results;
+
+if (f == 1) results = myBook.filterByType(query);
+
+else if (f == 2) results = myBook.filterByCity(query);
+
+if (results.empty()) cout \<\< "No results found.\n";
+
+else {
+
+cout \<\< results.size() \<\< " contact(s) found:\n";
+
+for (const auto\* c : results) c-\>printDetails();
+
+}
+
+break;
+
+}
+
+case 7: { // Groups
+
+int gChoice = -1;
+
+while (gChoice != 0) {
+
+showGroupMenu();
+
+cin \>\> gChoice;
+
+cin.ignore();
+
+switch (gChoice) {
+
+case 1: {
+
+cout \<\< "Enter new group name: ";
+
+string name; getline(cin, name);
+
+myBook.createGroup(name);
+
+break;
+
+}
+
+case 2: {
+
+cout \<\< "Enter contact ID: ";
+
+int id; cin \>\> id;
+
+cin.ignore();
+
+cout \<\< "Enter group name: ";
+
+string gname; getline(cin, gname);
+
+myBook.addContactToGroup(id, gname);
+
+break;
+
+}
+
+case 3: {
+
+cout \<\< "Enter contact ID to remove: ";
+
+int id; cin \>\> id;
+
+cin.ignore();
+
+cout \<\< "Enter group name: ";
+
+string gname; getline(cin, gname);
+
+myBook.removeContactFromGroup(id, gname);
+
+break;
+
+}
+
+case 4: {
+
+cout \<\< "Enter group name to delete: ";
+
+string gname; getline(cin, gname);
+
+myBook.deleteGroup(gname);
+
+break;
+
+}
+
+case 5: {
+
+myBook.listGroupsandContacts();
+
+break;
+
+}
+
+case 0: break;
+
+default: cout \<\< "Invalid option.\n";
+
+}
+
+}
+
+break;
+
+}
+
+case 8: { // Save
+
+myBook.saveToFile();
+
+break;
+
+}
+
+case 9: { // Load
+
+myBook.loadFromFile();
+
+break;
+
+}
+
+case 10: { // Manage Tags
+
+showTagMenu(myBook);
+
+break;
+
+}
+
+case 0:
+
+myBook.saveToFile();
+
+cout \<\< "Goodbye! All changes saved.\n";
+
+break;
+
+default:
+
+cout \<\< "Invalid choice, try again.\n";
+
+}
+
+}
 
 return 0;
+
+}
+
+void showMainMenu() {
+
+cout \<\< "\n===== ADDRESS BOOK MENU =====\n";
+
+cout \<\< "1. Add New Contact\n";
+
+cout \<\< "2. Edit Contact\n";
+
+cout \<\< "3. Delete Contact\n";
+
+cout \<\< "4. View All Contacts\n";
+
+cout \<\< "5. Search Contacts\n";
+
+cout \<\< "6. Filter Contacts\n";
+
+cout \<\< "7. Manage Groups\n";
+
+cout \<\< "8. Save to File\n";
+
+cout \<\< "9. Load from File\n";
+
+cout \<\< "10. Manage Tags\n";
+
+cout \<\< "0. Exit\n";
+
+cout \<\< "Choose an option: ";
+
+}
+
+void showGroupMenu() {
+
+cout \<\< "\n--- GROUP MENU ---\n";
+
+cout \<\< "1. Create Group\n";
+
+cout \<\< "2. Add Contact to Group\n";
+
+cout \<\< "3. Remove Contact from Group\n";
+
+cout \<\< "4. Delete Group\n";
+
+cout \<\< "5. List Groups and Members\n";
+
+cout \<\< "0. Return to Main Menu\n";
+
+cout \<\< "Choose an option: ";
+
+}
+
+void showTagMenu(AddressBook& myBook) {
+
+cout \<\< "Enter contact ID to manage tags: ";
+
+int id;
+
+cin \>\> id;
+
+cin.ignore();
+
+Contact\* contact = myBook.searchById(id);
+
+if (!contact) {
+
+cout \<\< "No contact found with that ID.\n";
+
+return;
+
+}
+
+int tagChoice = -1;
+
+while (tagChoice != 0) {
+
+cout \<\< "\n--- TAG MENU ---\n";
+
+cout \<\< "Managing tags for: " \<\< contact-\>getName() \<\< "\n";
+
+cout \<\< "1. Add Tag\n";
+
+cout \<\< "2. Remove Tag\n";
+
+cout \<\< "3. View Tags\n";
+
+cout \<\< "0. Return to Main Menu\n";
+
+cout \<\< "Choose: ";
+
+cin \>\> tagChoice;
+
+cin.ignore();
+
+switch (tagChoice) {
+
+case 1: {
+
+cout \<\< "Enter tag to add: ";
+
+string tag;
+
+getline(cin, tag);
+
+contact-\>addTag(tag);
+
+cout \<\< "Tag added successfully!\n";
+
+break;
+
+}
+
+case 2: {
+
+cout \<\< "Enter tag to remove: ";
+
+string tag;
+
+getline(cin, tag);
+
+contact-\>removeTag(tag);
+
+cout \<\< "Tag removed successfully!\n";
+
+break;
+
+}
+
+case 3: {
+
+cout \<\< "Current tags:\n";
+
+contact-\>displayTags();
+
+break;
+
+}
+
+case 0:
+
+cout \<\< "Returning to main menu...\n";
+
+break;
+
+default:
+
+cout \<\< "Invalid choice. Try again.\n";
+
+}
+
+}
 
 }
 
@@ -154,79 +622,101 @@ Contact.h
 
 \#pragma once
 
+\#include \<iostream\>
+
 \#include \<string\>
 
 \#include \<vector\>
 
-class Contact
+\#include \<algorithm\>
 
-{
+\#include \<limits\>
+
+using namespace std;
+
+class Contact {
 
 private:
 
 int id;
 
-std::string type;
+string type;
 
-std::string name;
+string name;
 
-std::string city;
+string city;
 
-std::string email;
+string email;
 
-std::string phone;
+string phone;
 
-std::vector\<std::string\> tags;
+vector\<string\> tags;
 
 public:
 
-Contact(int id, const std::string &type, const std::string &name,
+// Constructor
 
-const std::string &city, const std::string &email,
+Contact(int id, string type, string name, string city, string email,
+string phone, vector\<string\> tags);
 
-const std::string &phone,
+Contact(int id, string type, string name, string city, string email,
+string phone);
 
-const std::vector\<std::string\> &tags = {});
+// Destructor
 
-~Contact() = default;
+virtual ~Contact();
 
-// Getters
+// Getter functions. These will get a certain feature from the program,
+often to use in another function or if it is necessary for the user to
+see what a specific feature is.
 
 int getId() const;
 
-std::string getType() const;
+string getType() const;
 
-std::string getName() const;
+string getName() const;
 
-std::string getCity() const;
+string getCity() const;
 
-std::string getEmail() const;
+string getEmail() const;
 
-std::string getPhone() const;
+string getPhone() const;
 
-const std::vector\<std::string\> &getTags() const;
+// Setter functions. These set the attributes of the contact to what the
+user chooses to enter.
 
-// Setters
+void setId(int newId);
 
-void setName(const std::string &name);
+void setName(string n);
 
-void setCity(const std::string &city);
+void setCity(string c);
 
-void setEmail(const std::string &email);
+void setEmail(string e);
 
-void setPhone(const std::string &phone);
+void setPhone(string p);
 
-// Tag operations
+// tagging
 
-void addTag(const std::string &tag);
+void addTag(const string& tag);
 
-void removeTag(const std::string &tag);
+void removeTag(const string& tag);
 
-bool hasTag(const std::string &tag) const;
+bool hasTag(const string& tag) const;
 
-// String formatting for UI layer
+void displayTags() const;
 
-std::string getTagString() const;
+// Prints the contact’s most important features in one line, making it
+quick for the user to see.
+
+void printSummary() const; // one line: \[id\] name (type)
+
+// Prints the contact’s features, but in a more organized manner with
+documentation. It allows for the user to see exactly what the contact
+has, and what it is.
+
+void printDetails() const; // type, name, email, phone
+
+vector\<string\> getTags() const { return tags; }
 
 };
 
@@ -234,92 +724,131 @@ Contact.cpp
 
 \#include "Contact.h"
 
-\#include \<algorithm\>
-
-Contact::Contact(int id, const std::string &type, const std::string
-&name,
-
-const std::string &city, const std::string &email,
-
-const std::string &phone,
-
-const std::vector\<std::string\> &tags)
+Contact::Contact(int id, string type, string name, string city, string
+email, string phone, vector\<string\> tags)
 
 : id(id), type(type), name(name), city(city), email(email),
-phone(phone), tags(tags) {}
-
-int Contact::getId() const { return id; }
-
-std::string Contact::getType() const { return type; }
-
-std::string Contact::getName() const { return name; }
-
-std::string Contact::getCity() const { return city; }
-
-std::string Contact::getEmail() const { return email; }
-
-std::string Contact::getPhone() const { return phone; }
-
-const std::vector\<std::string\> &Contact::getTags() const { return
-tags; }
-
-void Contact::setName(const std::string &n) { name = n; }
-
-void Contact::setCity(const std::string &c) { city = c; }
-
-void Contact::setEmail(const std::string &e) { email = e; }
-
-void Contact::setPhone(const std::string &p) { phone = p; }
-
-void Contact::addTag(const std::string &tag)
+phone(phone), tags(tags)
 
 {
 
-if (!hasTag(tag))
+}
+
+Contact::Contact(int id, string type, string name, string city, string
+email, string phone)
+
+: id(id), type(type), name(name), city(city), email(email), phone(phone)
+{
+
+}
+
+Contact::~Contact() {}
+
+// Getters
+
+int Contact::getId() const { return id; }
+
+string Contact::getType() const { return type; }
+
+string Contact::getName() const { return name; }
+
+string Contact::getCity() const { return city; }
+
+string Contact::getEmail() const { return email; }
+
+string Contact::getPhone() const { return phone; }
+
+// Setters
+
+void Contact::setId(int newId) { id = newId; }
+
+void Contact::setName(string n) { name = n; }
+
+void Contact::setCity(string c) { city = c; }
+
+void Contact::setEmail(string e) { email = e; }
+
+void Contact::setPhone(string p) { phone = p; }
+
+void Contact::displayTags() const
+
+{
+
+cout \<\< "Tags: ";
+
+for (const auto& tag : tags) {
+
+cout \<\< tag \<\< " ";
+
+}
+
+cout \<\< endl;
+
+}
+
+void Contact::addTag(const string& tag)
+
+{
+
+if (!hasTag(tag)) {
 
 tags.push_back(tag);
 
 }
 
-void Contact::removeTag(const std::string &tag)
+}
+
+void Contact::removeTag(const string& tag)
 
 {
 
-auto it = std::find(tags.begin(), tags.end(), tag);
+auto it = find(tags.begin(), tags.end(), tag);
 
-if (it != tags.end())
+if (it == tags.end()) return;
 
 tags.erase(it);
 
 }
 
-bool Contact::hasTag(const std::string &tag) const
+bool Contact::hasTag(const string& tag) const
 
 {
 
-return std::find(tags.begin(), tags.end(), tag) != tags.end();
+return find(tags.begin(), tags.end(), tag) != tags.end();
 
 }
 
-std::string Contact::getTagString() const
+// Prints quick summary of key contact features
 
-{
+void Contact::printSummary() const {
 
-std::string s;
-
-for (size_t i = 0; i \< tags.size(); i++)
-
-{
-
-s += tags\[i\];
-
-if (i \< tags.size() - 1)
-
-s += ", ";
+cout \<\< "\[" \<\< id \<\< "\] " \<\< name \<\< " (" \<\< type \<\< ")"
+\<\< endl;
 
 }
 
-return s;
+// Prints important details about the contact in a neatly formatted
+manner.
+
+void Contact::printDetails() const {
+
+cout \<\< "ID: " \<\< id \<\< endl;
+
+cout \<\< "Type: " \<\< type \<\< endl;
+
+cout \<\< "Name: " \<\< name \<\< endl;
+
+cout \<\< "City: " \<\< city \<\< endl;
+
+cout \<\< "Email: " \<\< email \<\< endl;
+
+cout \<\< "Phone: " \<\< phone \<\< endl;
+
+displayTags();
+
+cout \<\< endl;
+
+cout \<\< "------------------------" \<\< endl;
 
 }
 
@@ -327,11 +856,17 @@ AddressBook.h
 
 \#pragma once
 
-\#include \<vector\>
+\#include \<iostream\>
 
 \#include \<string\>
 
+\#include \<vector\>
+
+\#include \<sstream\>
+
 \#include "Contact.h"
+
+using namespace std;
 
 class AddressBook
 
@@ -339,73 +874,86 @@ class AddressBook
 
 private:
 
-std::vector\<Contact\> contacts;
+vector\<Contact\> contacts; // Vector of contact objects
 
 struct Group
 
 {
 
-std::string name;
+string name;
 
-std::vector\<int\> memberIds;
+vector\<int\> memberIds;
 
 };
 
-std::vector\<Group\> groups;
+vector\<Group\> groups;
 
 public:
 
-AddressBook() = default;
+// Constructors and destructors
 
-~AddressBook() = default;
+AddressBook(vector\<Contact\> list);
 
-// Contact management
+AddressBook(vector\<Group\> groups);
 
-bool addContact(const Contact &c);
+~AddressBook();
 
-bool removeContactById(int id);
+// Contact Management
 
-Contact \*searchById(int id);
+void addContact(const Contact& associate);
 
-std::vector\<const Contact \*\> getAllContacts() const;
+void displayAllContacts() const;
 
-// Search / filter
+void addContactInteractive(); // Adds a new contact to the vector of
+contacts based on the user input.
 
-std::vector\<const Contact \*\> searchByName(const std::string &name)
-const;
+void deleteContactInteractive(); //
 
-std::vector\<const Contact \*\> searchByEmail(const std::string &email)
-const;
+bool removeContactById(int id); // Removes a contact based on the id
+that the user searches for.
 
-std::vector\<const Contact \*\> searchByPhone(const std::string &phone)
-const;
+// group management (simple)
 
-std::vector\<const Contact \*\> filterByType(const std::string &type)
-const;
+void createGroup(const string& name);
 
-std::vector\<const Contact \*\> filterByCity(const std::string &city)
-const;
+void deleteGroup(const string& groupName);
 
-std::vector\<const Contact \*\> filterByTag(const std::string &tag)
-const;
+void listGroupsandContacts() const;
 
-// Groups
+void addContactToGroup(int contactId, const string& groupName);
 
-bool createGroup(const std::string &name);
+void removeContactFromGroup(int contactId, const string& groupName);
 
-bool deleteGroup(const std::string &name);
+// Searching for contacts based on their features such as name, email,
+and phone number.
 
-bool addContactToGroup(int contactId, const std::string &group);
+Contact\* searchById(int id);
 
-bool removeContactFromGroup(int contactId, const std::string &group);
+vector\<const Contact\*\> searchByName(const string& name) const;
 
-std::vector\<Group\> getGroups() const;
+vector\<const Contact\*\> searchByEmail(const string& email) const;
 
-// File operations
+vector\<const Contact\*\> searchByPhone(const string& phone) const;
 
-bool saveToFile(const std::string &filename = "contact.txt") const;
+// Filtering contacts based on other features such as type and city
 
-bool loadFromFile(const std::string &filename = "contact.txt");
+vector\<const Contact\*\> filterByType(const string& type) const;
+
+vector\<const Contact\*\> filterByCity(const string& city) const;
+
+// Import / Export to text file
+
+void saveToFile() const;
+
+void loadFromFile();
+
+//Listing contacts by type
+
+void listByType() const;
+
+void showMissingInfo() const;
+
+void displayGroupSummaries() const;
 
 };
 
@@ -415,360 +963,654 @@ AddressBook.cpp
 
 \#include \<fstream\>
 
-\#include \<sstream\>
-
-\#include \<algorithm\>
-
-bool AddressBook::addContact(const Contact &c)
+AddressBook::AddressBook(vector\<Contact\> list)
 
 {
 
-for (const auto &existing : contacts)
-
-if (existing.getId() == c.getId())
-
-return false; // duplicate ID
-
-contacts.push_back(c);
-
-return true;
+contacts = list;
 
 }
+
+AddressBook::AddressBook(vector\<Group\> groups)
+
+{
+
+this-\>groups = groups;
+
+}
+
+AddressBook::~AddressBook()
+
+{
+
+}
+
+// Adds a basic contact.
+
+void AddressBook::addContact(const Contact& associate)
+
+{
+
+contacts.push_back(associate);
+
+}
+
+// Adds a new contact to the vector of the contacts based on the user
+input.
+
+void AddressBook::addContactInteractive()
+
+{
+
+vector\<string\> tags;
+
+cout \<\< "Adding new contact interactively" \<\< endl;
+
+int id;
+
+string type, name, city, email, phone, tag;
+
+cout \<\< "ID: "; cin \>\> id;
+cin.ignore(numeric_limits\<streamsize\>::max(), '\n');
+
+cout \<\< "Type: "; getline(cin, type);
+
+cout \<\< "Name: "; getline(cin, name);
+
+cout \<\< "City: "; getline(cin, city);
+
+cout \<\< "Email: "; getline(cin, email);
+
+cout \<\< "Phone: "; getline(cin, phone);
+
+cout \<\< "Woud you like to add a tag? (y/n): ";
+
+char t;
+
+cin \>\> t;
+
+cin.ignore(numeric_limits\<streamsize\>::max(), '\n');
+
+if (t == 'y' \|\| t == 'Y')
+
+{
+
+do
+
+{
+
+cout \<\< "Choose tag (Client, Friend, Important): ";
+
+getline(cin, tag);
+
+cout \<\< "Tag '" \<\< tag \<\< "' added." \<\< endl;
+
+tags.push_back(tag);
+
+cout \<\< "Would you like to add another tag? (y/n): ";
+
+cin \>\> t;
+
+cin.ignore(numeric_limits\<streamsize\>::max(), '\n');
+
+} while (t == 'y' \|\| t == 'Y');
+
+}
+
+Contact c(id, type, name, city, email, phone, tags);
+
+addContact(c);
+
+}
+
+// Displays all contacts in the address book.
+
+void AddressBook::displayAllContacts() const
+
+{
+
+for (const auto& contact : contacts)
+
+{
+
+contact.printDetails();
+
+}
+
+}
+
+// Removes a contact based on the user-inputted id. The contact is
+erased if the user-inputted id is found within the vector of contact
+objects and returns true, and changes nothing if there is no contact
+with the id while returning false.
 
 bool AddressBook::removeContactById(int id)
 
 {
 
-auto it = std::remove_if(contacts.begin(), contacts.end(),
+for (size_t i = 0; i \< contacts.size(); ++i) {
 
-\[id\](const Contact &c)
+if (contacts\[i\].getId() == id) {
 
-{ return c.getId() == id; });
-
-if (it == contacts.end())
-
-return false;
-
-contacts.erase(it, contacts.end());
+contacts.erase(contacts.begin() + static_cast\<long\>(i));
 
 return true;
 
 }
 
-Contact \*AddressBook::searchById(int id)
-
-{
-
-for (auto &c : contacts)
-
-if (c.getId() == id)
-
-return &c;
-
-return nullptr;
-
 }
-
-std::vector\<const Contact \*\> AddressBook::getAllContacts() const
-
-{
-
-std::vector\<const Contact \*\> out;
-
-for (const auto &c : contacts)
-
-out.push_back(&c);
-
-return out;
-
-}
-
-// Searches
-
-std::vector\<const Contact \*\> AddressBook::searchByName(const
-std::string &name) const
-
-{
-
-std::vector\<const Contact \*\> out;
-
-for (const auto &c : contacts)
-
-if (c.getName() == name)
-
-out.push_back(&c);
-
-return out;
-
-}
-
-std::vector\<const Contact \*\> AddressBook::searchByEmail(const
-std::string &email) const
-
-{
-
-std::vector\<const Contact \*\> out;
-
-for (const auto &c : contacts)
-
-if (c.getEmail() == email)
-
-out.push_back(&c);
-
-return out;
-
-}
-
-std::vector\<const Contact \*\> AddressBook::searchByPhone(const
-std::string &phone) const
-
-{
-
-std::vector\<const Contact \*\> out;
-
-for (const auto &c : contacts)
-
-if (c.getPhone() == phone)
-
-out.push_back(&c);
-
-return out;
-
-}
-
-// Filtering
-
-std::vector\<const Contact \*\> AddressBook::filterByType(const
-std::string &type) const
-
-{
-
-std::vector\<const Contact \*\> out;
-
-for (const auto &c : contacts)
-
-if (c.getType() == type)
-
-out.push_back(&c);
-
-return out;
-
-}
-
-std::vector\<const Contact \*\> AddressBook::filterByCity(const
-std::string &city) const
-
-{
-
-std::vector\<const Contact \*\> out;
-
-for (const auto &c : contacts)
-
-if (c.getCity() == city)
-
-out.push_back(&c);
-
-return out;
-
-}
-
-std::vector\<const Contact \*\> AddressBook::filterByTag(const
-std::string &tag) const
-
-{
-
-std::vector\<const Contact \*\> out;
-
-for (const auto &c : contacts)
-
-if (c.hasTag(tag))
-
-out.push_back(&c);
-
-return out;
-
-}
-
-// Group operations
-
-bool AddressBook::createGroup(const std::string &name)
-
-{
-
-for (const auto &g : groups)
-
-if (g.name == name)
 
 return false;
 
-groups.push_back({name, {}});
-
-return true;
-
 }
 
-bool AddressBook::deleteGroup(const std::string &name)
+// Interactive function that calls displayAllContacts() then allows for
+the user to input a basic id for a contact to delete, calls
+removeContactById(), then reports the result to the user. The function
+validates the id, letting the user know that the input is invalid if it
+does not fit within the constraints of the program. The function will
+let the user know if a contact was deleted, and if not, the user will be
+notified that there was no contact with the inputted id.
+
+void AddressBook::deleteContactInteractive()
 
 {
 
-auto it = std::remove_if(groups.begin(), groups.end(),
+cout \<\< "Current contacts:" \<\< endl;
 
-\[&name\](const Group &g)
+displayAllContacts();
 
-{ return g.name == name; });
+if (contacts.empty()) return;
 
-if (it == groups.end())
+cout \<\< "Enter the ID of the contact to delete: ";
 
-return false;
+int id;
 
-groups.erase(it, groups.end());
+if (!(cin \>\> id)) {
 
-return true;
+cin.clear();
+
+cin.ignore(numeric_limits\<streamsize\>::max(), '\n');
+
+cout \<\< "Invalid input." \<\< endl;
+
+return;
 
 }
 
-bool AddressBook::addContactToGroup(int contactId, const std::string
-&groupName)
+if (removeContactById(id)) {
+
+cout \<\< "Contact deleted." \<\< endl;
+
+}
+
+else {
+
+cout \<\< "No contact with that ID." \<\< endl;
+
+}
+
+}
+
+// Creates a group of contacts.
+
+void AddressBook::createGroup(const string& name)
 
 {
 
-for (auto &g : groups)
+Group newGroup;
+
+newGroup.name = name;
+
+groups.push_back(newGroup);
+
+}
+
+// Lists all groups of contacts.
+
+void AddressBook::listGroupsandContacts() const
+
+{
+
+for (const auto& g : groups)
+
+{
+
+cout \<\< "Group: " \<\< g.name \<\< endl;
+
+cout \<\< "Members:" \<\< endl;
+
+for (int memberId : g.memberIds)
+
+{
+
+auto it = find_if(contacts.begin(), contacts.end(), \[memberId\](const
+Contact& c) {
+
+return c.getId() == memberId;
+
+});
+
+if (it != contacts.end())
+
+{
+
+cout \<\< " - " \<\< it-\>getName() \<\< " (ID: " \<\< it-\>getId() \<\<
+")" \<\< endl;
+
+}
+
+else
+
+{
+
+cout \<\< " - Contact ID " \<\< memberId \<\< " not found." \<\< endl;
+
+}
+
+}
+
+cout \<\< "------------------------" \<\< endl;
+
+}
+
+}
+
+//Add Contact to Group
+
+void AddressBook::addContactToGroup(int contactId, const string&
+groupName)
+
+{
+
+for (auto& g : groups)
+
+{
 
 if (g.name == groupName)
+
+{
+
+// Check if contact exists
+
+auto it = find_if(contacts.begin(), contacts.end(), \[contactId\](const
+Contact& c) {
+
+return c.getId() == contactId;
+
+});
+
+if (it != contacts.end())
 
 {
 
 g.memberIds.push_back(contactId);
 
-return true;
+cout \<\< "Contact ID " \<\< contactId \<\< " added to group '" \<\<
+groupName \<\< "'." \<\< endl;
 
 }
 
-return false;
-
-}
-
-bool AddressBook::removeContactFromGroup(int contactId, const
-std::string &groupName)
+else
 
 {
 
-for (auto &g : groups)
+cout \<\< "Contact ID " \<\< contactId \<\< " not found." \<\< endl;
+
+}
+
+return;
+
+}
+
+}
+
+cout \<\< "Group '" \<\< groupName \<\< "' not found." \<\< endl;
+
+}
+
+//Remove contact from Group
+
+void AddressBook::removeContactFromGroup(int contactId, const string&
+groupName)
+
+{
+
+for (auto& g : groups)
+
+{
 
 if (g.name == groupName)
 
 {
 
-auto it = std::remove(g.memberIds.begin(), g.memberIds.end(),
-contactId);
+auto it = find(g.memberIds.begin(), g.memberIds.end(), contactId);
 
-if (it == g.memberIds.end())
-
-return false;
-
-g.memberIds.erase(it, g.memberIds.end());
-
-return true;
-
-}
-
-return false;
-
-}
-
-std::vector\<AddressBook::Group\> AddressBook::getGroups() const
+if (it != g.memberIds.end())
 
 {
 
-return groups;
+g.memberIds.erase(it);
+
+cout \<\< "Contact ID " \<\< contactId \<\< " removed from group '" \<\<
+groupName \<\< "'." \<\< endl;
 
 }
 
-// Save/load
-
-bool AddressBook::saveToFile(const std::string &filename) const
+else
 
 {
 
-std::ofstream out(filename);
-
-if (!out)
-
-return false;
-
-for (const auto &c : contacts)
-
-{
-
-out \<\< c.getId() \<\< "\n"
-
-\<\< c.getType() \<\< "\n"
-
-\<\< c.getName() \<\< "\n"
-
-\<\< c.getCity() \<\< "\n"
-
-\<\< c.getEmail() \<\< "\n"
-
-\<\< c.getPhone() \<\< "\n"
-
-\<\< c.getTagString() \<\< "\n"
-
-\<\< "----\n";
+cout \<\< "Contact ID " \<\< contactId \<\< " not found in group '" \<\<
+groupName \<\< "'." \<\< endl;
 
 }
 
-return true;
+return;
 
 }
 
-bool AddressBook::loadFromFile(const std::string &filename)
+}
+
+cout \<\< "Group '" \<\< groupName \<\< "' not found." \<\< endl;
+
+}
+
+// Delete a group as a whole
+
+void AddressBook::deleteGroup(const string& groupName)
 
 {
 
-std::ifstream in(filename);
+auto it = find_if(groups.begin(), groups.end(), \[&groupName\](const
+Group& g) {
 
-if (!in)
+return g.name == groupName;
 
-return false;
+});
+
+if (it != groups.end())
+
+{
+
+groups.erase(it);
+
+cout \<\< "Group '" \<\< groupName \<\< "' deleted." \<\< endl;
+
+}
+
+else
+
+{
+
+cout \<\< "Group '" \<\< groupName \<\< "' not found." \<\< endl;
+
+}
+
+}
+
+// Searching functions that browse for a specific feature of a contact,
+given a vector of contacts. These functions will often only find one
+instance of the feature, unless there is a special case.
+
+Contact\* AddressBook::searchById(int id)
+
+{
+
+for (size_t i = 0; i \< contacts.size(); ++i)
+
+{
+
+if (contacts\[i\].getId() == id)
+
+{
+
+return &contacts\[i\];
+
+}
+
+}
+
+return nullptr;
+
+}
+
+// Searches for a contact based on the user-inputted name.
+
+vector\<const Contact\*\> AddressBook::searchByName(const string& name)
+const {
+
+vector\<const Contact\*\> results;
+
+for (size_t i = 0; i \< contacts.size(); ++i) {
+
+if (contacts\[i\].getName() == name) {
+
+results.push_back(&contacts\[i\]);
+
+}
+
+}
+
+return results;
+
+}
+
+// Searches for a contact based on the user-inputted email.
+
+vector\<const Contact\*\> AddressBook::searchByEmail(const string&
+email) const {
+
+vector\<const Contact\*\> results;
+
+for (size_t i = 0; i \< contacts.size(); ++i) {
+
+if (contacts\[i\].getEmail() == email) {
+
+results.push_back(&contacts\[i\]);
+
+}
+
+}
+
+return results;
+
+}
+
+// Searches for a contact based on the user-inputted phone number.
+
+vector\<const Contact\*\> AddressBook::searchByPhone(const string&
+phone) const {
+
+vector\<const Contact\*\> results;
+
+for (size_t i = 0; i \< contacts.size(); ++i) {
+
+if (contacts\[i\].getPhone() == phone) {
+
+results.push_back(&contacts\[i\]);
+
+}
+
+}
+
+return results;
+
+}
+
+// Similar to searching functions, but these functions filter. Instead
+of being cases where one instance is found, there are often multiple, as
+the filtering is done by very broad criteria.
+
+// Filters the contacts based on the type, such as work or family. Since
+there could be multiple, all of the contacts with the specified type are
+returned.
+
+vector\<const Contact\*\> AddressBook::filterByType(const string& type)
+const {
+
+vector\<const Contact\*\> results;
+
+for (size_t i = 0; i \< contacts.size(); ++i) {
+
+if (contacts\[i\].getType() == type) {
+
+results.push_back(&contacts\[i\]);
+
+}
+
+}
+
+return results;
+
+}
+
+// Filters the contacts based on the city, such as Los Angeles or
+Chicago. Since there could be multiple, all of the contacts with the
+specified city are returned.
+
+vector\<const Contact\*\> AddressBook::filterByCity(const string& city)
+const {
+
+vector\<const Contact\*\> results;
+
+for (size_t i = 0; i \< contacts.size(); ++i) {
+
+if (contacts\[i\].getCity() == city) {
+
+results.push_back(&contacts\[i\]);
+
+}
+
+}
+
+return results;
+
+}
+
+// Save contacts directly to "contact.txt"
+
+void AddressBook::saveToFile() const {
+
+// Open the output file stream to write to "contact.txt"
+
+ofstream outFile("contact.txt");
+
+// Check if the file failed to open
+
+if (!outFile) {
+
+cerr \<\< "Error: could not open contact.txt for writing.\n";
+
+return; // Exit early if unable to write
+
+}
+
+// Loop through every contact in the AddressBook
+
+for (const auto& c : contacts) {
+
+// Write each field on a new line in a fixed order
+
+outFile \<\< c.getId() \<\< '\n'
+
+\<\< c.getType() \<\< '\n'
+
+\<\< c.getName() \<\< '\n'
+
+\<\< c.getCity() \<\< '\n'
+
+\<\< c.getEmail() \<\< '\n'
+
+\<\< c.getPhone() \<\< '\n';
+
+// Retrieve all tags for this contact (e.g. "Friend", "Client")
+
+vector\<string\> tags = c.getTags();
+
+// Write tags separated by commas (e.g. "Friend,VIP,Important")
+
+for (size_t i = 0; i \< tags.size(); ++i) {
+
+outFile \<\< tags\[i\];
+
+if (i \< tags.size() - 1)
+
+outFile \<\< ","; // Avoid trailing comma
+
+}
+
+// Add a newline and a separator to mark the end of this contact
+
+outFile \<\< '\n' \<\< "----" \<\< '\n';
+
+}
+
+// Close the output file stream
+
+outFile.close();
+
+// Notify user that saving completed successfully
+
+cout \<\< "Contacts saved to contact.txt successfully!\n";
+
+}
+
+// Load contacts directly from "contact.txt"
+
+void AddressBook::loadFromFile() {
+
+// Open the input file stream to read from "contact.txt"
+
+ifstream inFile("contact.txt");
+
+// Check if file could not be opened (e.g. it doesn't exist yet)
+
+if (!inFile) {
+
+cerr \<\< "No contact.txt file found. Starting fresh.\n";
+
+return; // Exit early if no saved data exists
+
+}
+
+// Clear any existing contacts to prevent duplicates
 
 contacts.clear();
 
-std::string line;
+string line; // Temporary string used for reading lines from file
 
-while (true)
+// Read contacts one at a time until we reach end of file
 
-{
+while (true) {
 
-std::string idStr, type, name, city, email, phone, tagLine;
+string idStr, type, name, city, email, phone, tagLine;
 
-if (!std::getline(in, idStr))
+// Read each contact's 7 lines in the same order they were written
 
-break;
+if (!getline(inFile, idStr)) break;
 
-std::getline(in, type);
+if (!getline(inFile, type)) break;
 
-std::getline(in, name);
+if (!getline(inFile, name)) break;
 
-std::getline(in, city);
+if (!getline(inFile, city)) break;
 
-std::getline(in, email);
+if (!getline(inFile, email)) break;
 
-std::getline(in, phone);
+if (!getline(inFile, phone)) break;
 
-std::getline(in, tagLine);
+if (!getline(inFile, tagLine)) break;
 
-std::getline(in, line); // separator
+// Split tag line (comma-separated) into a vector of strings
 
-std::vector\<std::string\> tags;
+vector\<string\> tags;
 
-std::stringstream ss(tagLine);
+stringstream ss(tagLine);
 
-std::string tag;
+string tag;
 
-while (std::getline(ss, tag, ','))
-
-{
+while (getline(ss, tag, ',')) {
 
 if (!tag.empty())
 
@@ -776,19 +1618,185 @@ tags.push_back(tag);
 
 }
 
-int id = std::stoi(idStr);
+// Skip the "----" separator line between contacts
 
-contacts.emplace_back(id, type, name, city, email, phone, tags);
+getline(inFile, line);
+
+// Convert ID from string to integer and create a new Contact object
+
+int id = 0;
+
+stringstream idStream(idStr);
+
+idStream \>\> id;
+
+Contact c(id, type, name, city, email, phone, tags);
+
+// Add the newly created contact to the AddressBook vector
+
+contacts.push_back(c);
 
 }
 
-return true;
+// Close the input file stream
+
+inFile.close();
+
+// Notify user that contacts were loaded successfully
+
+cout \<\< "Contacts loaded from contact.txt successfully!\n";
+
+}
+
+//List contacts by their type
+
+void AddressBook::listByType() const {
+
+if (contacts.empty()) {
+
+cout \<\< "No contacts to list.\n";
+
+return;
+
+}
+
+cout \<\< "\n===== Contacts by Type =====\n";
+
+vector\<string\> printedTypes;
+
+for (const auto& c : contacts) {
+
+string currentType = c.getType();
+
+// Checking to see if this type was already printed
+
+if (find(printedTypes.begin(), printedTypes.end(), currentType) ==
+printedTypes.end()) {
+
+cout \<\< "\n--- " \<\< currentType \<\< " ---\n";
+
+// Print all contacts that have this type
+
+for (const auto& other : contacts) {
+
+if (other.getType() == currentType)
+
+other.printSummary();
+
+}
+
+printedTypes.push_back(currentType);
+
+}
+
+}
+
+cout \<\< endl;
+
+}
+
+//Showing missing info contacts missing email of phone info
+
+void AddressBook::showMissingInfo() const {
+
+cout \<\< "\n===== Contacts Missing Info =====\n";
+
+bool found = false;
+
+for (const auto& c : contacts) {
+
+if (c.getEmail().empty() \|\| c.getPhone().empty()) {
+
+c.printSummary();
+
+if (c.getEmail().empty()) cout \<\< " -\> Missing Email\n";
+
+if (c.getPhone().empty()) cout \<\< " -\> Missing Phone\n";
+
+found = true;
+
+}
+
+}
+
+if (!found) {
+
+cout \<\< "All contacts have complete information." \<\< endl;
+
+}
+
+cout \<\< endl;
+
+}
+
+//DIsplays the number of members in each group and their names
+
+void AddressBook::displayGroupSummaries() const {
+
+cout \<\< "\n===== Group Summaries =====\n";
+
+if (groups.empty()) {
+
+cout \<\< "No groups have been created.\n";
+
+return;
+
+}
+
+for (const auto& g : groups) {
+
+cout \<\< "Group: " \<\< g.name
+
+\<\< " (Total members: " \<\< g.memberIds.size() \<\< ")\n";
+
+for (int memberId : g.memberIds) {
+
+auto it = find_if(contacts.begin(), contacts.end(),
+
+\[memberId\](const Contact& c) { return c.getId() == memberId; });
+
+if (it != contacts.end()) {
+
+cout \<\< " - " \<\< it-\>getName() \<\< " (" \<\< it-\>getType() \<\<
+")\n";
+
+}
+
+else {
+
+cout \<\< " - Contact ID " \<\< memberId \<\< " not found.\n";
+
+}
+
+}
+
+cout \<\< endl;
+
+}
+
+cout \<\< endl;
 
 }
 
 contact.txt
 
-Formatter.h
+123
+
+Family
+
+Bob
+
+New York
+
+shfs@gmail.com
+
+949-999-9999
+
+Friend,Client
+
+----
+
+(WIP) Formatter.h
 
 \#pragma once
 
@@ -808,7 +1816,7 @@ static std::string formatDetails(const Contact &c);
 
 };
 
-Formatter.cpp
+(WIP) Formatter.cpp
 
 \#include "Formatter.h"
 
@@ -849,7 +1857,7 @@ return out;
 
 }
 
-UIController.h
+(WIP) UIController.h
 
 \#pragma once
 
@@ -895,7 +1903,7 @@ static std::string getStringInput(const std::string &prompt);
 
 };
 
-UIController.cpp
+(WIP) UIController.cpp
 
 \#include "UIController.h"
 
