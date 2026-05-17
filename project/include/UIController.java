@@ -18,11 +18,9 @@ public class UIController {
     static void run(AddressBook book) {
     } // END run
 
-    /**
-     * *****************************************************************
+    /*******************************************************************
      * Main menus
-     *****************************************************************
-     */
+     ******************************************************************/
     /**
      * print options user can choose from
      */
@@ -42,19 +40,100 @@ public class UIController {
     } // END showMainMenu
 
     /**
-     *
+     * Options to modify groups
      */
-    private static void manageGroups(AddressBook book) {
+    public void manageGroups(AddressBook book) {
+
+        System.out.println("\n--- GROUP MENU ---");
+        System.out.println("1. Create Group");
+        System.out.println("2. Add Contact to Group");
+        System.out.println("3. Remove Contact from Group");
+        System.out.println("4. Delete Group");
+        System.out.println("5. View Groups");
+
+        int choice = getIntInput("Choose: ");
+
+        switch (choice) {
+            // Create group
+            case 1: {
+                String name = getStringInput("Group name: ");
+
+                if (book.createGroup(name)) {
+                    System.out.println("Created.");
+                } else {
+                    System.out.println("Group exists.");
+                }
+                break;
+            } // END case 1
+
+            case 2: {
+                int id = getIntInput("Contact ID: ");
+                String g = getStringInput("Group: ");
+
+                if (book.addContactToGroup(id, g)) {
+                    System.out.println("Added.");
+                } else {
+                    System.out.println("Error.");
+                }
+                break;
+            }
+
+            case 3: {
+                int id = getIntInput("Contact ID: ");
+                String g = getStringInput("Group: ");
+
+                if (book.removeContactFromGroup(id, g)) {
+                    System.out.println("Removed.");
+                } else {
+                    System.out.println("Error.");
+                }
+                break;
+            }
+
+            case 4: {
+                String g = getStringInput("Group name: ");
+
+                if (book.deleteGroup(g)) {
+                    System.out.println("Deleted.");
+                } else {
+                    System.out.println("Not found.");
+                }
+                break;
+            }
+
+            case 5: {
+                ArrayList<Group> groups = book.getGroups();
+
+                if (groups.isEmpty()) {
+                    System.out.println("No groups.");
+                    break;
+                }
+
+                for (Group g : groups) {
+                    System.out.println("Group: " + g.name);
+                    System.out.println("Members:");
+
+                    for (int id : g.memberIds) {
+                        System.out.println(" - ID " + id);
+                    }
+
+                    System.out.println("--------------------");
+                }
+
+                break;
+            }
+
+            default:
+                System.out.println("Invalid.");
+        }
     } // END manageGroups
 
     private static void manageTags(AddressBook book) {
     } // END manageTags
 
-    /**
-     * *****************************************************************
+    /*******************************************************************
      * Contact operations
-     *****************************************************************
-     */
+     ******************************************************************/
     /**
      * UI for entering contacts
      */
@@ -264,11 +343,9 @@ public class UIController {
         } // END for
     } // END filterUI
 
-    /**
-     * *****************************************************************
+    /*******************************************************************
      * Helpers
-     *****************************************************************
-     */
+     ******************************************************************/
     /**
      * function to get user input for integers
      *
