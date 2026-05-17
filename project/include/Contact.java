@@ -4,7 +4,7 @@
  */
 package project.include;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 public class Contact {
 
@@ -14,13 +14,13 @@ public class Contact {
     private String city;
     private String email;
     private String phone;
-    private Vector<String> tags;
+    private ArrayList<String> tags;
 
     /**
      * Constructor with tags
      */
     public Contact(int id, String type, String name, String city,
-            String email, String phone, Vector<String> tags) {
+            String email, String phone, ArrayList<String> tags) {
         this.id = id;
         this.type = type;
         this.name = name;
@@ -34,7 +34,7 @@ public class Contact {
      * Constructor NO tags
      */
     public Contact(int id, String type, String name, String city,
-                  String email, String phone) {
+            String email, String phone) {
         this.id = id;
         this.type = type;
         this.name = name;
@@ -46,21 +46,52 @@ public class Contact {
     /**
      * Getters
      */
-    public int getId() { return id; }
-    public String getType() { return type; }
-    public String getName() { return name; }
-    public String getCity() { return city; }
-    public String getEmail() { return email; }
-    public String getPhone() { return phone; }
+    public int getId() {
+        return id;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
 
     /**
      * Setters
      */
-    public void setId(int newId) { id = newId; }
-    public void setName(String n) { name = n; }
-    public void setCity(String c) { city = c; }
-    public void setEmail(String e) { email = e; }
-    public void setPhone(String p) { phone = p; }
+    public void setId(int newId) {
+        id = newId;
+    }
+
+    public void setName(String n) {
+        name = n;
+    }
+
+    public void setCity(String c) {
+        city = c;
+    }
+
+    public void setEmail(String e) {
+        email = e;
+    }
+
+    public void setPhone(String p) {
+        phone = p;
+    }
 
     /**
      * Print all tags
@@ -77,6 +108,7 @@ public class Contact {
 
     /**
      * Add tags if tage does not already exist
+     *
      * @param tag tag to add
      */
     public void addTag(String tag) {
@@ -87,6 +119,7 @@ public class Contact {
 
     /**
      * Remove tag
+     *
      * @param tag tag to remove
      */
     public void removeTag(String tag) {
@@ -95,12 +128,13 @@ public class Contact {
 
     /**
      * Checks if tag exists
+     *
      * @param tag tag to check
      */
     public boolean hasTag(String tag) {
         return tags.contains(tag);
     } // END hasTag
-    
+
     /**
      * Prints quick summary of key contact features
      */
