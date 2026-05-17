@@ -46,52 +46,22 @@ public class Contact {
     /**
      * Getters
      */
-    public int getId() {
-        return id;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
+    public int getId() { return id; }
+    public String getType() { return type; }
+    public String getName() { return name; }
+    public String getCity() { return city; }
+    public String getEmail() { return email; }
+    public String getPhone() { return phone; }
+    public ArrayList<String> getTags() { return tags; }
 
     /**
      * Setters
      */
-    public void setId(int newId) {
-        id = newId;
-    }
-
-    public void setName(String n) {
-        name = n;
-    }
-
-    public void setCity(String c) {
-        city = c;
-    }
-
-    public void setEmail(String e) {
-        email = e;
-    }
-
-    public void setPhone(String p) {
-        phone = p;
-    }
+    public void setId(int newId) { id = newId; }
+    public void setName(String n) { name = n; }
+    public void setCity(String c) { city = c; }
+    public void setEmail(String e) { email = e; }
+    public void setPhone(String p) { phone = p; }
 
     /**
      * Print all tags
@@ -158,4 +128,5 @@ public class Contact {
         System.out.println();
         System.out.println("------------------------");
     } // END printDetails
+
 } // END class Contact
