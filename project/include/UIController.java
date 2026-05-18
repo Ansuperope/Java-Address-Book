@@ -6,7 +6,6 @@ package project.include;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
-import project.include.AddressBook;
 
 public class UIController {
 
@@ -19,68 +18,66 @@ public class UIController {
     public static void run(AddressBook book) {
         int choice = -1;
 
-        while (choice != 0)
-        {
+        while (choice != 0) {
             showMainMenu();
             choice = getIntInput("Choose an option: ");
 
-            switch (choice)
-            {
-            case 1:
-                addContactUI(book);
-                break;
-            case 2:
-                editContactUI(book);
-                break;
-            case 3:
-                deleteContactUI(book);
-                break;
-            case 4:
-                viewAllUI(book);
-                break;
-            case 5:
-                searchUI(book);
-                break;
-            case 6:
-                filterUI(book);
-                break;
-            case 7:
-                manageGroups(book);
-                break;
-            case 8:
-                try {
-                    book.saveToFile();
-                    System.out.println("Saved.");
-                } 
-                catch (IOException e) {
-                    System.out.println("Save failed: " + e.getMessage());
-                }
-                break;
-            case 9:
-                try {
-                    book.loadFromFile();
-                    System.out.println("Loaded.");
-                } 
-                catch (IOException e) {
-                    System.out.println("Load failed: " + e.getMessage());
-                }
-                break;
-            case 10:
-                manageTags(book);
-                break;
-            case 0:
-                System.out.println("Exiting...");
-                break;
-            default:
-                System.out.println("Invalid choice.");
+            switch (choice) {
+                case 1:
+                    addContactUI(book);
+                    break;
+                case 2:
+                    editContactUI(book);
+                    break;
+                case 3:
+                    deleteContactUI(book);
+                    break;
+                case 4:
+                    viewAllUI(book);
+                    break;
+                case 5:
+                    searchUI(book);
+                    break;
+                case 6:
+                    filterUI(book);
+                    break;
+                case 7:
+                    manageGroups(book);
+                    break;
+                case 8:
+                    try {
+                        book.saveToFile();
+                        System.out.println("Saved.");
+                    } catch (IOException e) {
+                        System.out.println("Save failed: " + e.getMessage());
+                    }
+                    break;
+                case 9:
+                    try {
+                        book.loadFromFile();
+                        System.out.println("Loaded.");
+                    } catch (IOException e) {
+                        System.out.println("Load failed: " + e.getMessage());
+                    }
+                    break;
+                case 10:
+                    manageTags(book);
+                    break;
+                case 0:
+                    System.out.println("Exiting...");
+                    break;
+                default:
+                    System.out.println("Invalid choice.");
             } // END switch
         } // END while
 
     } // END run
 
-    /*******************************************************************
+    /**
+     * *****************************************************************
      * Main menus
-     ******************************************************************/
+     *****************************************************************
+     */
     /**
      * print options user can choose from
      */
@@ -224,9 +221,11 @@ public class UIController {
         } // END switch
     } // END manageTags
 
-    /*******************************************************************
+    /**
+     * *****************************************************************
      * Contact operations
-     ******************************************************************/
+     *****************************************************************
+     */
     /**
      * UI for entering contacts
      */
@@ -438,8 +437,7 @@ public class UIController {
 
     /**
      * *****************************************************************
-     * Helpers
-     *****************************************************************
+     * Helpers ****************************************************************
      */
     /**
      * function to get user input for integers

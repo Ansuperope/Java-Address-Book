@@ -3,7 +3,6 @@
  * @brief utility class used to print information neatly
  */
 package project.include;
-import project.include.Contact;
 
 public class Formatter {
 

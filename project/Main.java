@@ -10,12 +10,8 @@ package project;
 
 // Include files from other folders
 import project.include.AddressBook;
-import project.include.Contact;
-import project.include.Formatter;
 import project.include.UIController;
 
-import java.util.ArrayList;
-import java.util.Scanner;
 import java.io.IOException;
 
 public class Main {
