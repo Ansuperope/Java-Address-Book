@@ -115,7 +115,53 @@ public class UIController {
         }
     } // END manageGroups
 
+    /**
+     * Options to modify tags
+     */
     private static void manageTags(AddressBook book) {
+
+        int id = getIntInput("ID for tag management: ");
+
+        Contact c = book.searchById(id);
+
+        // Check if user id found
+        if (c == null) {
+            System.out.println("Not found.");
+            return;
+        }
+
+        // Tag options prompt
+        System.out.println("\n--- TAG MENU ---");
+        System.out.println("1. Add Tag");
+        System.out.println("2. Remove Tag");
+        System.out.println("3. View Tags");
+
+        int choice = getIntInput("Choose: ");
+
+        switch (choice) {
+            // Add tag
+            case 1: {
+                String t = getStringInput("Tag to add: ");
+                c.addTag(t);
+                System.out.println("Added.");
+                break;
+            }
+            // Remove
+            case 2: {
+                String t = getStringInput("Tag to remove: ");
+                c.removeTag(t);
+                System.out.println("Removed.");
+                break;
+            }
+            // Print tags
+            case 3: {
+                System.out.println("Tags: " + c.getTags());
+                break;
+            }
+            // Default, error
+            default:
+                System.out.println("Invalid.");
+        } // END switch
     } // END manageTags
 
     /*******************************************************************
