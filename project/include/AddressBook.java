@@ -27,6 +27,14 @@ public class AddressBook {
     private ArrayList<Group> groups = new ArrayList<>();
 
     /**
+     * Default constructor
+     */
+    public AddressBook() {
+        this.contacts = new ArrayList<>();
+        this.groups = new ArrayList<>();
+    } // END AddressBook default
+
+    /**
      * Constructor list
      */
     public AddressBook(List<Contact> list) {
@@ -196,14 +204,16 @@ public class AddressBook {
         } // END else
     } // END deleteContactInteractive
 
-    /*******************************************************************
+    /**
+     * *****************************************************************
      * GROUP RELATED FUNCTIONS
-     ******************************************************************/
+     *****************************************************************
+     */
     /**
      * Creates a group of contacts.
      */
     public boolean createGroup(String name) {
-         // Check if group already exists
+        // Check if group already exists
         for (Group group : groups) {
             if (group.name.equalsIgnoreCase(name)) {
                 return false;
@@ -244,11 +254,10 @@ public class AddressBook {
 
                         g.memberIds.add(contactId);
 
-                        System.out.println("Contact ID " + contactId +
-                            " added to group '" + groupName + "'.");
+                        System.out.println("Contact ID " + contactId
+                                + " added to group '" + groupName + "'.");
 
-                    } 
-                    else {
+                    } else {
                         System.out.println("Contact already in group.");
                     }
 

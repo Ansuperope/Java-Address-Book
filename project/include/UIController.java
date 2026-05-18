@@ -16,8 +16,8 @@ public class UIController {
     /**
      * main program
      */
-    static void run(AddressBook book) {
-            int choice = -1;
+    public static void run(AddressBook book) {
+        int choice = -1;
 
         while (choice != 0)
         {

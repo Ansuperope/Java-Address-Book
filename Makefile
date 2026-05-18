@@ -5,7 +5,7 @@ SRC_DIR = project
 MAIN = project.Main
 
 SOURCES = $(shell find $(SRC_DIR) -name "*.java")
-CLASSES = $(SOURCES:.java=.class)
+CLASSES = $(SOURCES:.java=*.class)
 
 .PHONY: all run clean docs save zip
 
