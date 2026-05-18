@@ -43,7 +43,16 @@ public class AddressBook {
     /**
      * Getter function. Gets all contacts
      */
-    public ArrayList<Contact> getAllContacts() { return contacts; }
+    public ArrayList<Contact> getAllContacts() {
+        return contacts;
+    } // END getAllContacts
+
+    /**
+     * Getter function. Gets all groups
+     */
+    public ArrayList<Group> getGroups() {
+        return groups;
+    } // END getGroups
 
     /**
      * Adds a basic contact
@@ -57,7 +66,7 @@ public class AddressBook {
         for (Contact c : contacts) {
             // duplicate ID
             if (c.getId() == associate.getId()) {
-                return false; 
+                return false;
             } // END if
         } // END for (Contact c : contacts)
 
@@ -187,10 +196,79 @@ public class AddressBook {
         } // END else
     } // END deleteContactInteractive
 
+    /*******************************************************************
+     * GROUP RELATED FUNCTIONS
+     ******************************************************************/
+    /**
+     * Creates a group of contacts.
+     */
+    public boolean createGroup(String name) {
+         // Check if group already exists
+        for (Group group : groups) {
+            if (group.name.equalsIgnoreCase(name)) {
+                return false;
+            }
+        } // END for
+
+        // Create empty member list
+        ArrayList<Integer> memberIds = new ArrayList<>();
+
+        // Create and add group
+        Group newGroup = new Group(name, memberIds);
+        groups.add(newGroup);
+
+        return true;
+    } // END createGroup
+
+    /**
+     * Add Contact to Group
+     */
+    public boolean addContactToGroup(int contactId, String groupName) {
+        for (Group g : groups) {
+            if (g.name.equals(groupName)) {
+
+                // Check if contact exists
+                Contact foundContact = null;
+
+                for (Contact c : contacts) {
+                    if (c.getId() == contactId) {
+                        foundContact = c;
+                        break;
+                    }
+                } // END for
+
+                if (foundContact != null) {
+
+                    // Prevent duplicates
+                    if (!g.memberIds.contains(contactId)) {
+
+                        g.memberIds.add(contactId);
+
+                        System.out.println("Contact ID " + contactId +
+                            " added to group '" + groupName + "'.");
+
+                    } 
+                    else {
+                        System.out.println("Contact already in group.");
+                    }
+
+                } // END if (foundContact != null)
+                else {
+                    System.out.println("Contact ID " + contactId + " not found.");
+                }
+
+                return true;
+            } // END if (g.name.equals(groupName))
+        } // END for
+
+        System.out.println("Group '" + groupName + "' not found.");
+        return false;
+    } // END addContactToGroup
+
     /**
      * Remove contact from Group
      */
-    public void removeContactFromGroup(int contactId, String groupName) {
+    public boolean removeContactFromGroup(int contactId, String groupName) {
 
         for (Group g : groups) {
 
@@ -213,19 +291,20 @@ public class AddressBook {
                             + " not found in group '" + groupName + "'.");
                 } // END else
 
-                // Exit function
-                return;
+                // Exit function, return true
+                return true;
             } // END if (g.name.equals(groupName))
         } // END for (Group g : groups)
 
-        // If not found
+        // If not found, return false
         System.out.println("Group '" + groupName + "' not found.");
+        return false;
     } // END removeContactFromGroup
 
     /**
      * Delete a group as a whole
      */
-    public void deleteGroup(String groupName) {
+    public boolean deleteGroup(String groupName) {
 
         // Search through groups to find group name
         for (int i = 0; i < groups.size(); i++) {
@@ -236,14 +315,65 @@ public class AddressBook {
                 groups.remove(i);
                 System.out.println("Group '" + groupName + "' deleted.");
 
-                // Exit funciton
-                return;
+                // Exit funciton, return true
+                return true;
             } // END if
         } // END for
 
-        // Could not find group name
+        // Could not find group name, return false
         System.out.println("Group '" + groupName + "' not found.");
+        return false;
     } // END deleteGroup
+
+    /**
+     * Displays the number of members in each group and their names
+     */
+    public void displayGroupSummaries() {
+        System.out.println("\n===== Group Summaries =====");
+
+        // No groups, exit
+        if (groups.isEmpty()) {
+            System.out.println("No groups have been created.");
+            return;
+        } // END if (groups.isEmpty())
+
+        // Iteratre through all groups
+        for (Group g : groups) {
+
+            System.out.println("Group: " + g.name
+                    + " (Total members: " + g.memberIds.size() + ")");
+
+            // Print all members in the group
+            for (int memberId : g.memberIds) {
+
+                Contact foundContact = null;
+
+                // Get member id to print
+                for (Contact c : contacts) {
+                    // Check if id exists
+                    if (c.getId() == memberId) {
+                        foundContact = c;
+                        break;
+                    }
+                } // END for (Contact c : contacts)
+
+                // Found id, print id
+                if (foundContact != null) {
+                    System.out.println(" - " + foundContact.getName()
+                            + " (" + foundContact.getType() + ")");
+                } // END if (foundContact != null)
+                // Id does not exist, print error
+                else {
+                    System.out.println(" - Contact ID " + memberId
+                            + " not found.");
+                } // END else
+            } // END for (int memberId : g.memberIds)
+
+            System.out.println();
+        } // END for (Group g : groups)
+
+        System.out.println();
+    } // END displayGroupSummaries
 
     /**
      * Searching functions that browse for a specific feature of a contact,
@@ -308,7 +438,7 @@ public class AddressBook {
      * Similar to searching functions, but these functions filter. Instead of
      * being cases where one instance is found, there are often multiple, as the
      * filtering is done by very broad criteria.
-     *****************************************************************
+     * ****************************************************************
      */
     /**
      * Filters the contacts based on the type, such as work or family. Since
@@ -345,9 +475,9 @@ public class AddressBook {
     } // END filterByCity
 
     /**
-     * Filters the contacts based on the tag, such as friends or family.
-     * Since there could be multiple, all of the contacts with the specified
-     * tags are returned.
+     * Filters the contacts based on the tag, such as friends or family. Since
+     * there could be multiple, all of the contacts with the specified tags are
+     * returned.
      */
     public ArrayList<Contact> filterByTag(String tag) {
         ArrayList<Contact> results = new ArrayList<>();
@@ -535,55 +665,5 @@ public class AddressBook {
 
         System.out.println();
     } // END showMissingInfo
-
-    /**
-     * Displays the number of members in each group and their names
-     */
-    public void displayGroupSummaries() {
-        System.out.println("\n===== Group Summaries =====");
-
-        // No groups, exit
-        if (groups.isEmpty()) {
-            System.out.println("No groups have been created.");
-            return;
-        } // END if (groups.isEmpty())
-
-        // Iteratre through all groups
-        for (Group g : groups) {
-
-            System.out.println("Group: " + g.name
-                    + " (Total members: " + g.memberIds.size() + ")");
-
-            // Print all members in the group
-            for (int memberId : g.memberIds) {
-
-                Contact foundContact = null;
-
-                // Get member id to print
-                for (Contact c : contacts) {
-                    // Check if id exists
-                    if (c.getId() == memberId) {
-                        foundContact = c;
-                        break;
-                    }
-                } // END for (Contact c : contacts)
-
-                // Found id, print id
-                if (foundContact != null) {
-                    System.out.println(" - " + foundContact.getName()
-                            + " (" + foundContact.getType() + ")");
-                } // END if (foundContact != null)
-                // Id does not exist, print error
-                else {
-                    System.out.println(" - Contact ID " + memberId
-                            + " not found.");
-                } // END else
-            } // END for (int memberId : g.memberIds)
-
-            System.out.println();
-        } // END for (Group g : groups)
-
-        System.out.println();
-    } // END displayGroupSummaries
 
 } // END class AddressBook

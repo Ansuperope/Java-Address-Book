@@ -66,6 +66,7 @@ public class UIController {
                 break;
             } // END case 1
 
+            // Add contact
             case 2: {
                 int id = getIntInput("Contact ID: ");
                 String g = getStringInput("Group: ");
@@ -78,6 +79,7 @@ public class UIController {
                 break;
             }
 
+            // Remove
             case 3: {
                 int id = getIntInput("Contact ID: ");
                 String g = getStringInput("Group: ");
@@ -90,6 +92,7 @@ public class UIController {
                 break;
             }
 
+            // Delete
             case 4: {
                 String g = getStringInput("Group name: ");
 
@@ -101,25 +104,9 @@ public class UIController {
                 break;
             }
 
+            // List all group info
             case 5: {
-                ArrayList<Group> groups = book.getGroups();
-
-                if (groups.isEmpty()) {
-                    System.out.println("No groups.");
-                    break;
-                }
-
-                for (Group g : groups) {
-                    System.out.println("Group: " + g.name);
-                    System.out.println("Members:");
-
-                    for (int id : g.memberIds) {
-                        System.out.println(" - ID " + id);
-                    }
-
-                    System.out.println("--------------------");
-                }
-
+                book.displayGroupSummaries();
                 break;
             }
 
@@ -164,7 +151,7 @@ public class UIController {
 
         // Contact added
         if (ok) {
-            System.out.print("Contact added.\n"); 
+            System.out.print("Contact added.\n");
         }// Contact not added
         else {
             System.out.print("Error: ID already exists.\n");
@@ -224,7 +211,7 @@ public class UIController {
         int id = getIntInput("Enter ID to delete: ");
         // Found ID
         if (book.removeContactById(id)) {
-            System.out.println("Deleted."); 
+            System.out.println("Deleted.");
         }// Did not find
         else {
             System.out.println("Contact not found.");
@@ -343,9 +330,11 @@ public class UIController {
         } // END for
     } // END filterUI
 
-    /*******************************************************************
+    /**
+     * *****************************************************************
      * Helpers
-     ******************************************************************/
+     *****************************************************************
+     */
     /**
      * function to get user input for integers
      *
