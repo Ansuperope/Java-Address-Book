@@ -32,4 +32,4 @@ save:
 # make zip file
 zip:
 	rm -f cs4a-project4.zip
-	zip -r cs4a-project4.zip project README.md contact.txt -x "*.class"
+	zip -r cs4a-project4.zip project README.md contact.txt output.txt -x "*.class"

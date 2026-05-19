@@ -1,0 +1,86 @@
+===== ADDRESS BOOK MENU =====
+1. Add New Contact
+2. Edit Contact
+3. Delete Contact
+4. View All Contacts
+5. Search Contacts
+6. Filter Contacts
+7. Manage Groups
+8. Save to File
+9. Load from File
+10. Manage Tags
+0. Exit
+Choose an option: 1
+ID: 2
+Type: Person
+Name: Hobs
+City: Laguna Niguel
+Email: email1@yahoo.com
+Phone: 818-666-6666
+Add tag(s)? (y/n): y
+Enter tag: Friend
+Add another? (y/n): n
+Contact added.
+
+===== ADDRESS BOOK MENU =====
+1. Add New Contact
+2. Edit Contact
+3. Delete Contact
+4. View All Contacts
+5. Search Contacts
+6. Filter Contacts
+7. Manage Groups
+8. Save to File
+9. Load from File
+10. Manage Tags
+0. Exit
+Choose an option: 2
+Enter ID to edit: 67
+
+Editing Contact:
+
+────────────────────────
+ID: 67
+Type: Family
+Name: ur mom
+City: ur dad's house
+Email: coolEmail@gmail.com
+Phone: 676-6767-6767
+Tags: [hot, single, idk]
+────────────────────────
+
+New name (leave blank to keep): Aspen
+New city (leave blank to keep): Laguna Niguel
+New email (leave blank to keep): 
+New phone (leave blank to keep): 
+Updated.
+
+===== ADDRESS BOOK MENU =====
+1. Add New Contact
+2. Edit Contact
+3. Delete Contact
+4. View All Contacts
+5. Search Contacts
+6. Filter Contacts
+7. Manage Groups
+8. Save to File
+9. Load from File
+10. Manage Tags
+0. Exit
+Choose an option: 8
+Saved.
+
+===== ADDRESS BOOK MENU =====
+1. Add New Contact
+2. Edit Contact
+3. Delete Contact
+4. View All Contacts
+5. Search Contacts
+6. Filter Contacts
+7. Manage Groups
+8. Save to File
+9. Load from File
+10. Manage Tags
+0. Exit
+Choose an option: 0
+Exiting...

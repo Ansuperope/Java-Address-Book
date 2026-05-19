@@ -1,8 +1,16 @@
 67
 Family
-ur mom
-ur dad's house
+Aspen
+Laguna Niguel
 coolEmail@gmail.com
 676-6767-6767
 hot,single,idk
+----
+2
+Person
+Hobs
+Laguna Niguel
+email1@yahoo.com
+818-666-6666
+Friend
 ----
